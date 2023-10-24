@@ -18,7 +18,7 @@ def InitialiseSD():
     except Exception as error:
         exception_handler.PrintError(function_name='InitialiseSD()', error=error)
     
-def ReadWriteToSD(entry: str, file_name: str, path: str='', method: str='w'):
+def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
     """
     method can be:
         w	(over)write file
