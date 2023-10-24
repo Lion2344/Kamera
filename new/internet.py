@@ -11,7 +11,6 @@ def ConnectToWifi():
         lights.ToggleLight(name_of_light='Green')
     except:
         lights.ToggleLight(name_of_light='Red')
-    wifi.radio.disconnect()
 
 def ScanningAvailableNetwork():
     networks = wifi.radio.start_scanning_networks()
