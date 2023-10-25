@@ -4,7 +4,7 @@ import board
 import usb_cdc
 from Arducam import *
 from board import *
-
+import lights
 
 mode = 0
 start_capture = 0
@@ -19,9 +19,12 @@ mycam.Camera_Detection()
 mycam.Spi_Test()
 mycam.Camera_Init()
 mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
-utime.sleep(1)
+#utime.sleep(1)
 mycam.clear_fifo_flag()
 mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
+mycam.set_format(JPEG)
+mycam.OV5642_set_JPEG_size(OV5642_320x240);
+mycam.start_capture();
 
 def read_fifo_burst():
     count=0
@@ -240,12 +243,18 @@ while True:
         if start_capture==1:
             mycam.flush_fifo();
             mycam.clear_fifo_flag();
+            print('start capture')
             mycam.start_capture();
             start_capture=0
         if mycam.get_bit(ARDUCHIP_TRIG,CAP_DONE_MASK)!=0:
-            read_fifo_burst()
-            mode=0      
-
+            print('ACK CMD CAM Capture Done.')
+            print(read_fifo_burst())
+            print('Clear the capture done flag')
+            mycam.clear_fifo_flag()
+            print('Cleared')
+            mode=0
+            lights.ToggleLight(name_of_light='Green', duration=1)
+            #break
     if mode==2:
         if stop_flag==0:
             if start_capture==2:

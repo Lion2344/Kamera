@@ -3,10 +3,8 @@ import busio
 import bitbangio
 import time as utime
 import digitalio
-from OV2640_reg import *
 from OV5642_reg import *
 
-OV2640=0
 OV5642=1
 
 MAX_FIFO_SIZE=0x7FFFFF
@@ -18,16 +16,6 @@ CAP_DONE_MASK=0x08
 
 OV5642_CHIPID_HIGH=0x300a
 OV5642_CHIPID_LOW=0x300b
-
-OV2640_160x120  =0
-OV2640_176x144  =1
-OV2640_320x240  =2
-OV2640_352x288  =3
-OV2640_640x480  =4
-OV2640_800x600  =5
-OV2640_1024x768 =6
-OV2640_1280x1024=7
-OV2640_1600x1200=8
 
 OV5642_320x240  =0
 OV5642_640x480  =1
@@ -184,17 +172,7 @@ class ArducamClass(object):
         
     def Camera_Detection(self):
         while True:
-            if self.CameraType==OV2640:
-                self.I2cAddress=0x30
-                self.wrSensorReg8_8(0xff,0x01)
-                id_h=self.rdSensorReg8_8(0x0a)
-                id_l=self.rdSensorReg8_8(0x0b)
-                if((id_h==0x26)and((id_l==0x40)or(id_l==0x42))):
-                    print('CameraType is OV2640')
-                    break
-                else:
-                    print('Can\'t find OV2640 module')
-            elif self.CameraType==OV5642:
+            if self.CameraType==OV5642:
                 self.I2cAddress=0x3c
                 self.wrSensorReg16_8(0xff,0x01)
                 id_h=self.rdSensorReg16_8(OV5642_CHIPID_HIGH)
@@ -260,17 +238,7 @@ class ArducamClass(object):
             utime.sleep(1)
 
     def Camera_Init(self):
-        if self.CameraType==OV2640:
-            self.wrSensorReg8_8(0xff,0x01)
-            self.wrSensorReg8_8(0x12,0x80)
-            utime.sleep(0.1)
-            self.wrSensorRegs8_8(OV2640_JPEG_INIT);
-            self.wrSensorRegs8_8(OV2640_YUV422);
-            self.wrSensorRegs8_8(OV2640_JPEG);
-            self.wrSensorReg8_8(0xff,0x01)
-            self.wrSensorReg8_8(0x15,0x00)
-            self.wrSensorRegs8_8(OV2640_320x240_JPEG);
-        elif self.CameraType==OV5642:
+        if self.CameraType==OV5642:
             self.wrSensorReg16_8(0x3008, 0x80)
             if self.CameraMode == RAW:
                 self.wrSensorRegs16_8(OV5642_1280x960_RAW)
@@ -387,237 +355,6 @@ class ArducamClass(object):
     def set_bit(self,addr,bit):
         temp=self.Spi_read(addr)[0]
         self.Spi_write(addr,temp&(~bit))
-    
-    def OV2640_set_JPEG_size(self,size):
-        if size==OV2640_160x120:
-            self.wrSensorRegs8_8(OV2640_160x120_JPEG)
-        elif size==OV2640_176x144:
-            self.wrSensorRegs8_8(OV2640_176x144_JPEG)
-        elif size==OV2640_320x240:
-            self.wrSensorRegs8_8(OV2640_320x240_JPEG)
-        elif size==OV2640_352x288:
-            self.wrSensorRegs8_8(OV2640_352x288_JPEG)
-        elif size==OV2640_640x480:
-            self.wrSensorRegs8_8(OV2640_640x480_JPEG)
-        elif size==OV2640_800x600:
-            self.wrSensorRegs8_8(OV2640_800x600_JPEG)
-        elif size==OV2640_1024x768:
-            self.wrSensorRegs8_8(OV2640_1024x768_JPEG)
-        elif size==OV2640_1280x1024:
-            self.wrSensorRegs8_8(OV2640_1280x1024_JPEG)
-        elif size==OV2640_1600x1200:
-            self.wrSensorRegs8_8(OV2640_1600x1200_JPEG)
-        else:
-            self.wrSensorRegs8_8(OV2640_320x240_JPEG)
-      
-      
-    def OV2640_set_Light_Mode(self,result):
-        if result==Auto:
-            self.wrSensorReg8_8(0xff,0x00)
-            self.wrSensorReg8_8(0xc7,0x00)
-        elif result==Sunny:
-            self.wrSensorReg8_8(0xff,0x00)
-            self.wrSensorReg8_8(0xc7,0x40)
-            self.wrSensorReg8_8(0xcc,0x5e)
-            self.wrSensorReg8_8(0xcd,0x41)
-            self.wrSensorReg8_8(0xce,0x54)
-        elif result==Cloudy:
-            self.wrSensorReg8_8(0xff,0x00)
-            self.wrSensorReg8_8(0xc7,0x40)
-            self.wrSensorReg8_8(0xcc,0x65)
-            self.wrSensorReg8_8(0xcd,0x41)
-            self.wrSensorReg8_8(0xce,0x4f)
-        elif result==Office:
-            self.wrSensorReg8_8(0xff,0x00)
-            self.wrSensorReg8_8(0xc7,0x40)
-            self.wrSensorReg8_8(0xcc,0x52)
-            self.wrSensorReg8_8(0xcd,0x41)
-            self.wrSensorReg8_8(0xce,0x66)
-        elif result==Home:
-            self.wrSensorReg8_8(0xff,0x00)
-            self.wrSensorReg8_8(0xc7,0x40)
-            self.wrSensorReg8_8(0xcc,0x42)
-            self.wrSensorReg8_8(0xcd,0x3f)
-            self.wrSensorReg8_8(0xce,0x71)
-        else:
-            self.wrSensorReg8_8(0xff,0x00)
-            self.wrSensorReg8_8(0xc7,0x00)
-    def OV2640_set_Color_Saturation(self,Saturation):
-        if Saturation== Saturation2:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x02)
-            self.wrSensorReg8_8(0x7c, 0x03)
-            self.wrSensorReg8_8(0x7d, 0x68)
-            self.wrSensorReg8_8(0x7d, 0x68)
-        elif Saturation== Saturation1:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x02)
-            self.wrSensorReg8_8(0x7c, 0x03)
-            self.wrSensorReg8_8(0x7d, 0x58)
-            self.wrSensorReg8_8(0x7d, 0x58)
-        elif Saturation== Saturation0:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x02)
-            self.wrSensorReg8_8(0x7c, 0x03)
-            self.wrSensorReg8_8(0x7d, 0x48)
-            self.wrSensorReg8_8(0x7d, 0x48)
-        elif Saturation== Saturation_1:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x02)
-            self.wrSensorReg8_8(0x7c, 0x03)
-            self.wrSensorReg8_8(0x7d, 0x38)
-            self.wrSensorReg8_8(0x7d, 0x38)
-        elif Saturation== Saturation_2:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x02)
-            self.wrSensorReg8_8(0x7c, 0x03)
-            self.wrSensorReg8_8(0x7d, 0x28)
-            self.wrSensorReg8_8(0x7d, 0x28)
-            
-    def OV2640_set_Brightness(self,Brightness):
-        if Brightness== Brightness2:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x09)
-            self.wrSensorReg8_8(0x7d, 0x40)
-            self.wrSensorReg8_8(0x7d, 0x00)
-        elif Brightness== Brightness1:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x09)
-            self.wrSensorReg8_8(0x7d, 0x30)
-            self.wrSensorReg8_8(0x7d, 0x00)
-        elif Brightness== Brightness0:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x09)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x00)
-        elif Brightness== Brightness_1:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x09)
-            self.wrSensorReg8_8(0x7d, 0x10)
-            self.wrSensorReg8_8(0x7d, 0x00)
-        elif Brightness== Brightness_2:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x09)
-            self.wrSensorReg8_8(0x7d, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x00)
-    def OV2640_set_Contrast(self,Contrast):
-        if Contrast== Contrast2:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x07)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x28)
-            self.wrSensorReg8_8(0x7d, 0x0c)
-            self.wrSensorReg8_8(0x7d, 0x06)
-        elif Contrast== Contrast1:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x07)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x24)
-            self.wrSensorReg8_8(0x7d, 0x16)
-            self.wrSensorReg8_8(0x7d, 0x06) 
-        elif Contrast== Contrast0:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x07)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x06) 
-        elif Contrast== Contrast_1:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x07)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x2a)
-            self.wrSensorReg8_8(0x7d, 0x06)
-        elif Contrast== Contrast_2:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x04)
-            self.wrSensorReg8_8(0x7c, 0x07)
-            self.wrSensorReg8_8(0x7d, 0x20)
-            self.wrSensorReg8_8(0x7d, 0x18)
-            self.wrSensorReg8_8(0x7d, 0x34)
-            self.wrSensorReg8_8(0x7d, 0x06)     
-    def OV2640_set_Special_effects(self,Special_effect):
-        if Special_effect== Antique:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x18)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x40)
-            self.wrSensorReg8_8(0x7d, 0xa6)
-        elif Special_effect== Bluish:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x18)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0xa0)
-            self.wrSensorReg8_8(0x7d, 0x40)
-        elif Special_effect== Greenish:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x18)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x40)
-            self.wrSensorReg8_8(0x7d, 0x40)
-        elif Special_effect== Reddish:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x18)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x40)
-            self.wrSensorReg8_8(0x7d, 0xc0)
-        elif Special_effect== BW:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x18)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x80)
-            self.wrSensorReg8_8(0x7d, 0x80)
-        elif Special_effect== Negative:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x40)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x80)
-            self.wrSensorReg8_8(0x7d, 0x80)
-        elif Special_effect== BWnegative:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x58)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x80)
-            self.wrSensorReg8_8(0x7d, 0x80)
-        elif Special_effect== Normal:
-            self.wrSensorReg8_8(0xff, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x00)
-            self.wrSensorReg8_8(0x7d, 0x00)
-            self.wrSensorReg8_8(0x7c, 0x05)
-            self.wrSensorReg8_8(0x7d, 0x80)
-            self.wrSensorReg8_8(0x7d, 0x80)
 
     def OV5642_set_JPEG_size(self,size):
         if size== OV5642_320x240:
