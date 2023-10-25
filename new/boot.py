@@ -1,7 +1,7 @@
 import lights
 import sdcard
 import internet
-import main
+
 
 import usb_cdc
 
@@ -14,9 +14,3 @@ for i in range(3):
 
 internet.ConnectToWifi()
 
-try:
-    lights.ToggleLight('Yellow', 5)
-    main.Test()
-except:
-    lights.ToggleLight('Red', 5)
-lights.ToggleLight('Green', 2)
