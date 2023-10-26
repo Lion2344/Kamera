@@ -21,9 +21,10 @@ def InitialiseSD():
 def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
     """
     method can be:
-        w	(over)write file
-        a	append existing file
-        r	read file
+        w (over)write file
+        wb write binary data 
+        a append existing file
+        r read file
     """
     if path =='':
         path = f"/sd/{file_name}"
@@ -31,18 +32,28 @@ def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
         path = f"/sd/{path}/{file_name}"
     
     InitialiseSD()
-    
+    file = open(path, method)
+    print('writting on sdcard...')
+    file.write(entry)
+    print('done')
+    file.close()
+    print('file closed')
+    """
     with open(path, method) as f:
         if method == 'w':
             f.write(str(entry))
         elif method == 'a':
-            f.write(f'\n{str(entry)}')        
+            f.write(f'\n{str(entry)}')
+        elif method == 'wb':    
+            print('writting on sdcard...')
+            f.write(arrays)
+            print('done')
         elif method == 'r':
             line = f.readline()
             while line != '':
                 print(line)
                 line = f.readline()
-            
+    """ 
 
 
 def PrintDirectory(path, tabs=0):

@@ -164,7 +164,7 @@ class ArducamClass(object):
         self.i2c = bitbangio.I2C(scl=board.GP9, sda=board.GP8,frequency=1000000)
         while not self.i2c.try_lock():
             pass
-        print(self.i2c.scan())
+        #print(self.i2c.scan())
         self.Spi_write(0x07,0x80)
         utime.sleep(0.1)
         self.Spi_write(0x07,0x00)
@@ -178,7 +178,7 @@ class ArducamClass(object):
                 id_h=self.rdSensorReg16_8(OV5642_CHIPID_HIGH)
                 id_l=self.rdSensorReg16_8(OV5642_CHIPID_LOW)
                 if((id_h==0x56)and(id_l==0x42)):
-                    print('CameraType is OV5642')
+                    #print('CameraType is OV5642')
                     break
                 else:
                     print('Can\'t find OV5642 module')
@@ -287,43 +287,54 @@ class ArducamClass(object):
         self.spi_write(buffer)
         self.spi_readinto(buffer)
         self.SPI_CS_HIGH()
+        #print(buffer)
         return buffer
 
     def spi_write(self, buf, *, start=0, end=None):
+        #print('spi_write')
         if end is None:
             end = len(buf)
         self.spi.write(buf, start=start, end=end)
 
     def spi_readinto(self, buf, *, start=0, end=None):
+        #print('spi_readinto')
         if end is None:
             end = len(buf)
         self.spi.readinto(buf, start=start, end=end)
         
     def get_bit(self,addr,bit):
+        #print('get_bit')
         value=self.Spi_read(addr)[0]
         return value&bit
   
     def SPI_CS_LOW(self):
+        ##print('SPI_CS_LOW')
         self.SPI_CS.value=False
         
     def SPI_CS_HIGH(self):
+        ##print('SPI_CS_HIGH')
         self.SPI_CS.value=True
         
     def set_fifo_burst(self):
+        ##print('set_fifo_burst')
         buffer=bytearray(1)
         buffer[0]=0x3c
         self.spi.write(buffer, start=0, end=1)
         
     def clear_fifo_flag(self):
+        #print('clear_fifo_flag')
         self.Spi_write(0x04,0x01)
         
     def flush_fifo(self):
+        #print('flush_fifo')
         self.Spi_write(0x04,0x01)
         
     def start_capture(self):
+        #print('start_capture')
         self.Spi_write(0x04,0x02)
         
     def read_fifo_length(self):
+        #print('read_fifo_length')
         len1=self.Spi_read(0x42)[0]
         len2=self.Spi_read(0x43)[0]
         len3=self.Spi_read(0x44)[0]
@@ -332,6 +343,7 @@ class ArducamClass(object):
         return lenght
     
     def wrSensorRegs8_8(self,reg_value):
+        #print('wrSensorRegs8_8')
         for data in reg_value:
             addr = data[0]
             val = data[1]
@@ -341,6 +353,7 @@ class ArducamClass(object):
             utime.sleep(0.001)
             
     def wrSensorRegs16_8(self,reg_value):
+        #print('wrSensorRegs16_8')
         for data in reg_value:
             addr = data[0]
             val = data[1]
@@ -349,14 +362,17 @@ class ArducamClass(object):
             self.wrSensorReg16_8(addr, val)
             
     def set_format(self,mode):
+        #print('set_format')
         if mode==BMP or mode==JPEG or mode==RAW:   
             self.CameraMode=mode
             
     def set_bit(self,addr,bit):
+        #print('set_bit')
         temp=self.Spi_read(addr)[0]
         self.Spi_write(addr,temp&(~bit))
 
     def OV5642_set_JPEG_size(self,size):
+        #print('OV5642_set_JPEG_size')
         if size== OV5642_320x240:
           self.wrSensorRegs16_8(ov5642_320x240)
         elif size== OV5642_640x480:
@@ -375,6 +391,7 @@ class ArducamClass(object):
           self.wrSensorRegs16_8(ov5642_320x240)
  
     def OV5642_set_Light_Mode(self,Light_Mode):
+        #print('OV5642_set_Light_Mode')
         if Light_Mode== Advanced_AWB:
             self.wrSensorReg16_8(0x3406 ,0x0 )
             self.wrSensorReg16_8(0x5192 ,0x04)
@@ -432,7 +449,8 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x3404 ,0x5 )
             self.wrSensorReg16_8(0x3405 ,0x0)
 
-    def OV5642_set_Color_Saturation(self,Color_Saturation):       
+    def OV5642_set_Color_Saturation(self,Color_Saturation):
+        #print('OV5642_set_Color_Saturation')
         if Color_Saturation== Saturation4:
             self.wrSensorReg16_8(0x5001 ,0xff)
             self.wrSensorReg16_8(0x5583 ,0x80)
@@ -480,6 +498,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x5580 ,0x02)
                  
     def OV5642_set_Brightness(self,Brightness):
+        #print('OV5642_set_Brightness')
         if Brightness== Brightness4:
             self.wrSensorReg16_8(0x5001 ,0xff)
             self.wrSensorReg16_8(0x5589 ,0x40)
@@ -527,6 +546,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x558a ,0x08)
             
     def OV5642_set_Contrast(self,Contrast):
+        #print('OV5642_set_Contrast')
         if Contrast== Contrast4:
             self.wrSensorReg16_8(0x5001 ,0xff)
             self.wrSensorReg16_8(0x5580 ,0x04)
@@ -583,6 +603,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x558a ,0x00)
        
     def OV5642_set_hue(self,degree):
+        #print('OV5642_set_hue')
         if degree== degree_180:
             self.wrSensorReg16_8(0x5001 ,0xff)
             self.wrSensorReg16_8(0x5580 ,0x01)
@@ -657,6 +678,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x558a ,0x31)
       
     def OV5642_set_Special_effects(self,Special_effect):
+        #print('OV5642_set_Special_effects')
         if  Special_effect== Bluish:
             self.wrSensorReg16_8(0x5001 ,0xff)
             self.wrSensorReg16_8(0x5580 ,0x18)
@@ -690,6 +712,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x5580 ,0x00)
             
     def OV5642_set_Exposure_level(self,level):
+        #print('OV5642_set_Exposure_level')
         if level== Exposure_17_EV:
             self.wrSensorReg16_8(0x3a0f ,0x10)
             self.wrSensorReg16_8(0x3a10 ,0x08)
@@ -769,6 +792,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x3a1f ,0x20)
             
     def OV5642_set_Sharpness(self,Sharpness):
+        #print('OV5642_set_Sharpness')
         if Sharpness== Auto_Sharpness_default:
             self.wrSensorReg16_8(0x530A ,0x00)
             self.wrSensorReg16_8(0x530c ,0x0 )
@@ -810,6 +834,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x531f ,0x1f)
 
     def OV5642_set_Mirror_Flip(self,Mirror_Flip):
+        #print('OV5642_set_Mirror_Flip')
         if Mirror_Flip== MIRROR:
             reg_val=self.rdSensorReg16_8(0x3818)
             reg_val = reg_val|0x00
@@ -844,6 +869,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x3621, reg_val )
 
     def OV5642_set_Compress_quality(self,quality):
+        #print('OV5642_set_Compress_quality')
         if quality== high_quality:
             self.wrSensorReg16_8(0x4407, 0x02)
         elif quality== default_quality:
@@ -852,6 +878,7 @@ class ArducamClass(object):
             self.wrSensorReg16_8(0x4407, 0x08)
     
     def OV5642_Test_Pattern(self,Pattern):
+        #print('OV5642_Test_Pattern')
         if Pattern== Color_bar:
             self.wrSensorReg16_8(0x503d , 0x80)
             self.wrSensorReg16_8(0x503e, 0x00)
