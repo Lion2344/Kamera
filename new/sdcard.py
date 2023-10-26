@@ -16,7 +16,7 @@ def InitialiseSD():
         vfs = storage.VfsFat(sdcard)
         storage.mount(vfs, "/sd")
     except Exception as error:
-        exception_handler.PrintError(function_name='InitialiseSD()', error=error)
+        print(error)
     
 def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
     """
@@ -26,14 +26,21 @@ def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
         a append existing file
         r read file
     """
+    print('initialise SD...')
+    InitialiseSD()
+    print('done')
+    
     if path =='':
         path = f"/sd/{file_name}"
     else:
         path = f"/sd/{path}/{file_name}"
     
-    InitialiseSD()
-    file = open(path, method)
-    print('writting on sdcard...')
+    print('open file')
+    try:
+        file = open(path, method)
+    except Exception as error:
+        print(error)
+    print('writing on sdcard...')
     file.write(entry)
     print('done')
     file.close()

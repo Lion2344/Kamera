@@ -1,9 +1,11 @@
+import lights
+from OV5642_reg import *
+
 import board
 import busio
 import bitbangio
 import time as utime
 import digitalio
-from OV5642_reg import *
 
 OV5642=1
 
@@ -268,6 +270,7 @@ def Parameters():
     return params_dict
 
 class ArducamClass(object):
+
     def __init__(self,Type):
         self.CameraMode=JPEG
         self.CameraType=Type
@@ -281,7 +284,7 @@ class ArducamClass(object):
         self.i2c = bitbangio.I2C(scl=board.GP9, sda=board.GP8,frequency=1000000)
         while not self.i2c.try_lock():
             pass
-        #print(self.i2c.scan())
+
         self.Spi_write(0x07,0x80)
         utime.sleep(0.1)
         self.Spi_write(0x07,0x00)

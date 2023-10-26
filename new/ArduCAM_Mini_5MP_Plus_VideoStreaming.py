@@ -1,24 +1,25 @@
 import sdcard
 import lights
+import exception_handler
 
 import time
 import busio
 import board
-import usb_cdc
 from Arducam import *
 from board import *
 
 
+      
 stop_flag=0
 once_number=128
 value_command=0
 flag_command=0
+
 buffer=bytearray(once_number)
-#for b in buffer:
-#    print(b)
 mycam = ArducamClass(OV5642)
 mycam.Camera_Detection()
 mycam.Spi_Test()
+
 mycam.Camera_Init()
 mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
 #utime.sleep(1)
@@ -27,8 +28,6 @@ mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
 mycam.set_format(JPEG)
 mycam.OV5642_set_JPEG_size(OV5642_320x240);
 mycam.start_capture();
-
-
 
 def read_fifo_burst(filename: str()):
     count=0
@@ -44,6 +43,7 @@ def read_fifo_burst(filename: str()):
             count=lenght-count
             mycam.spi.readinto(buffer,start=0,end=count)
             _buffer+=buffer
+            print('call sd...')
             sdcard.ReadWriteToSD(file_name=f'{filename}.jpg', entry=_buffer, method='wb')
             mycam.SPI_CS_HIGH()
             mycam.clear_fifo_flag()
@@ -71,27 +71,39 @@ def TakePicture(filename: str()):
     mycam.start_capture();
 
 
-    print('ACK CMD CAM Capture Done.')
+    print('read burst...')
     print(read_fifo_burst(filename=filename))
-    print('Clear the capture done flag')
+    print('done')
+    print('clear the capture...')
     mycam.clear_fifo_flag()
-    print('Cleared')
+    print('done')
 
 then = time.time()
 led_yellow = lights.GetLight(name_of_light='Yellow')
 led_green = lights.GetLight(name_of_light='Green')
+led_red = lights.GetLight(name_of_light='Red')
 
 for i in range(3):
+    print(f"{i}/2")
     led_yellow.value = True
     led_green.value = False
-    TakePicture(filename=i)
-    led_yellow.value = False
-    led_green.value = True
-    time.sleep(3)
+    led_red.value = False
+    try:
+        TakePicture(filename=i)
+        led_green.value = True
+        led_yellow.value = False
+    except:
+        led_red.value = True
+        led_yellow.deinit()
+        led_green.deinit()
+        #lights.Error()
+        break
+    time.sleep(1)
 
 duration = time.time() - then
 led_yellow.deinit()
 led_green.deinit()
 print(duration)
+
 
 

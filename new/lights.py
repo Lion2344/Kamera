@@ -10,6 +10,17 @@ def DictLights():
         'Green': board.GP15
     }
     return dict_lights
+
+def ToggleLight(name_of_light: str, duration: int=1):
+    dict_lights = DictLights()
+    
+    led = DigitalInOut(dict_lights[name_of_light])
+    led.direction = Direction.OUTPUT
+    
+    led.value = True
+    time.sleep(duration)
+    led.value = False
+    led.deinit()
     
 def GetLight(name_of_light: str()):
     
@@ -27,6 +38,9 @@ def GetLight(name_of_light: str()):
         pin_obj.direction = Direction.OUTPUT
         return pin_obj
 
+def Error():
+    for led in DictLights():
+        ToggleLight(name_of_light=led, duration=0.3)
 
 # Define your pin assignments and their new uses.
 #pin_to_check = "Yellow"

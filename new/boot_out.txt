@@ -1,6 +1,0 @@
-Adafruit CircuitPython 8.2.7 on 2023-10-19; Raspberry Pi Pico W with rp2040
-Board ID:raspberry_pi_pico_w
-UID:E6616407E3397931
-MAC:28:CD:C1:07:6E:7A
-boot.py output:
-An exception occured in InitialiseSD(): [Errno 19] No such device
