@@ -78,10 +78,20 @@ def TakePicture(filename: str()):
     print('Cleared')
 
 then = time.time()
+led_yellow = lights.GetLight(name_of_light='Yellow')
+led_green = lights.GetLight(name_of_light='Green')
+
 for i in range(3):
+    led_yellow.value = True
+    led_green.value = False
     TakePicture(filename=i)
+    led_yellow.value = False
+    led_green.value = True
     time.sleep(3)
+
 duration = time.time() - then
+led_yellow.deinit()
+led_green.deinit()
 print(duration)
 
 

@@ -1,4 +1,5 @@
-import sdcard
+import time
 
-sdcard.InitialiseSD()
-
+then = time.time()
+time.sleep(2)
+print(time.time() - then)
