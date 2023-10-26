@@ -150,6 +150,123 @@ BMP =0
 JPEG=1
 RAW =2
 
+def Parameters():
+    params_dict = {
+        'sizes': [
+            OV5642_320x240,
+            OV5642_640x480,
+            OV5642_1024x768,
+            OV5642_1280x960,
+            OV5642_1600x1200,
+            OV5642_2048x1536,
+            OV5642_2592x1944
+        ],
+        'light_modes': [
+            Advanced_AWB,
+            Simple_AWB,
+            Manual_day,
+            Manual_A,
+            Manual_cwf,
+            Manual_cloudy,
+            Saturation_4
+        ],
+        'color_saturations': [
+            Saturation0,
+            Saturation1,
+            Saturation2,
+            Saturation3,
+            Saturation4,
+            Saturation_1,
+            Saturation_2,
+            Saturation_3
+        ],
+        'brightnesses': [
+            Brightness0,
+            Brightness1,
+            Brightness2,
+            Brightness3,
+            Brightness4,
+            Brightness_1,
+            Brightness_2,
+            Brightness_3,
+            Brightness_4
+        ],
+        'contrasts': [
+            Contrast0,
+            Contrast1,
+            Contrast2,
+            Contrast3,
+            Contrast4,
+            Contrast_1,
+            Contrast_2,
+            Contrast_3,
+            Contrast_4
+        ],
+        'hues': [
+            degree30,
+            degree60,
+            degree90,
+            degree120,
+            degree150,
+            degree_0,
+            degree_30,
+            degree_60,
+            degree_90,
+            degree_120,
+            degree_150,
+            degree_180
+        ],
+        'special_effects': [
+            Normal,
+            BW,
+            Bluish,
+            Sepia,
+            Reddish,
+            Greenish,
+            Negative
+        ],
+        'exposure_levels': [
+            Exposure_default,
+            Exposure07_EV,
+            Exposure10_EV,
+            Exposure13_EV,
+            Exposure17_EV,
+            Exposure_03_EV,
+            Exposure_07_EV,
+            Exposure_10_EV,
+            Exposure_13_EV,
+            Exposure_17_EV
+        ],
+        'sharpnesses': [
+            Auto_Sharpness_default,
+            Manual_Sharpnessoff,
+            Auto_Sharpness1,
+            Auto_Sharpness2,
+            Manual_Sharpness1,
+            Manual_Sharpness2,
+            Manual_Sharpness3,
+            Manual_Sharpness4,
+            Manual_Sharpness5
+        ],
+        'mirror_flips': [
+            Normal,
+            MIRROR,
+            FLIP,
+            MIRROR_FLIP
+        ],  
+        'compress_qualities': [
+            default_quality,
+            low_quality,
+            high_quality
+        ],
+        'test_patterns': [
+            Color_bar,
+            Color_square,
+            BW_square, DLI
+        ]
+    }
+    return params_dict
+
 class ArducamClass(object):
     def __init__(self,Type):
         self.CameraMode=JPEG
