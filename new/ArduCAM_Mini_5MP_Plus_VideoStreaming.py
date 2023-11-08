@@ -15,7 +15,6 @@ once_number=128
 value_command=0
 flag_command=0
 
-buffer=bytearray(once_number)
 mycam = ArducamClass(OV5642)
 mycam.Camera_Detection()
 mycam.Spi_Test()
@@ -34,6 +33,7 @@ def read_fifo_burst(filename: str()):
     lenght=mycam.read_fifo_length()
     mycam.SPI_CS_LOW()
     mycam.set_fifo_burst()
+    buffer=bytearray(once_number) 
     _buffer = bytearray()
     while True:
         mycam.spi.readinto(buffer,start=0,end=once_number)
@@ -83,13 +83,13 @@ led_yellow = lights.GetLight(name_of_light='Yellow')
 led_green = lights.GetLight(name_of_light='Green')
 led_red = lights.GetLight(name_of_light='Red')
 
-for i in range(3):
+for i in range(10):
     print(f"{i}/2")
     led_yellow.value = True
     led_green.value = False
     led_red.value = False
     try:
-        lights.ToggleLight('White')
+        lights.ToggleLight('White', duration=0.1)
         TakePicture(filename=i)
         led_green.value = True
         led_yellow.value = False
@@ -99,7 +99,7 @@ for i in range(3):
         led_green.deinit()
         #lights.Error()
         break
-    time.sleep(1)
+    time.sleep(0.1)
 
 duration = time.time() - then
 led_yellow.deinit()
