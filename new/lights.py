@@ -7,7 +7,8 @@ def DictLights():
         'OnBoard': board.LED,
         'Red': board.GP13,
         'Yellow': board.GP14,
-        'Green': board.GP15
+        'Green': board.GP15,
+        'White': board.GP16
     }
     return dict_lights
 
@@ -17,6 +18,9 @@ def ToggleLight(name_of_light: str, duration: int=1):
     led = DigitalInOut(dict_lights[name_of_light])
     led.direction = Direction.OUTPUT
     
+    if name_of_light == 'White':
+        time.sleep(duration/10)
+        
     led.value = True
     time.sleep(duration)
     led.value = False

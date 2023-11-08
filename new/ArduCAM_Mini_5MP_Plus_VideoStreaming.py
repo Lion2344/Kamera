@@ -89,6 +89,7 @@ for i in range(3):
     led_green.value = False
     led_red.value = False
     try:
+        lights.ToggleLight('White')
         TakePicture(filename=i)
         led_green.value = True
         led_yellow.value = False
