@@ -27,11 +27,12 @@ mycam.OV5642_set_JPEG_size(OV5642_320x240);
 mycam.start_capture();
 
 def read_fifo_burst(filename: str()):
+
     count=0
     lenght=mycam.read_fifo_length()
     mycam.SPI_CS_LOW()
     mycam.set_fifo_burst()
-    buffer=bytearray(once_number) 
+    buffer=bytearray(once_number)
     _buffer = bytearray()
     while True:
         mycam.spi.readinto(buffer,start=0,end=once_number)
@@ -42,7 +43,11 @@ def read_fifo_burst(filename: str()):
             mycam.spi.readinto(buffer,start=0,end=count)
             _buffer+=buffer
             print('call sd...')
+            time.sleep(0.2)
+            lights.ToggleLight('White', duration=0.5)
             sdcard.ReadWriteToSD(file_name=f'{filename}.jpg', entry=_buffer, method='wb')
+            time.sleep(0.2)
+            lights.ToggleLight('White', duration=0.5)
             mycam.SPI_CS_HIGH()
             mycam.clear_fifo_flag()
             break
@@ -69,13 +74,9 @@ def TakePicture(filename: str()):
 
 
     print('read burst...')
-    time.sleep(1)
-    lights.ToggleLight('White', duration=1)
-    print(read_fifo_burst(filename=filename))
+    read_fifo_burst(filename=filename)
     print('done')
     print('clear the capture...')
-    time.sleep(1)
-    lights.ToggleLight('White', duration=1)
     mycam.clear_fifo_flag()
     print('done')
 
