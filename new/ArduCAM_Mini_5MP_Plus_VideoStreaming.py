@@ -43,8 +43,6 @@ def read_fifo_burst(filename: str()):
             mycam.spi.readinto(buffer,start=0,end=count)
             _buffer+=buffer
             print('call sd...')
-            time.sleep(0.2)
-            lights.ToggleLight('White', duration=0.5)
             sdcard.ReadWriteToSD(file_name=f'{filename}.jpg', entry=_buffer, method='wb')
             time.sleep(0.2)
             lights.ToggleLight('White', duration=0.5)

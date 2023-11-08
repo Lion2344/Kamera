@@ -6,6 +6,8 @@ import board
 import busio
 import sdcardio
 import storage
+import lights
+import time
 
 def InitialiseSD():
     try:
@@ -40,10 +42,22 @@ def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
         file = open(path, method)
     except Exception as error:
         print(error)
+        
     print('writing on sdcard...')
-    file.write(entry)
+    time.sleep(0.2)
+    lights.ToggleLight('White', duration=0.5)
+    try:
+        file.write(entry)
+    except:
+        lights.ToggleLight('White', duration=5)
+        print(error)
+    
+    time.sleep(0.2)
+    lights.ToggleLight('White', duration=0.5)
     print('done')
     file.close()
+    time.sleep(0.2)
+    lights.ToggleLight('White', duration=0.5)
     print('file closed')
     """
     with open(path, method) as f:
