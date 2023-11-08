@@ -9,32 +9,33 @@ from Arducam import *
 from board import *
 
 
-      
-stop_flag=0
-once_number=128
-value_command=0
-flag_command=0
+def StartCam():
+    #stop_flag=0
+    #value_command=0
+    #flag_command=0
 
-buffer=bytearray(once_number)
-mycam = ArducamClass(OV5642)
-mycam.Camera_Detection()
-mycam.Spi_Test()
+    mycam = ArducamClass(OV5642)
+    mycam.Camera_Detection()
+    mycam.Spi_Test()
 
-mycam.Camera_Init()
-mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
-#utime.sleep(1)
-mycam.clear_fifo_flag()
-mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
-mycam.set_format(JPEG)
-mycam.OV5642_set_JPEG_size(OV5642_320x240);
-mycam.start_capture();
+    mycam.Camera_Init()
+    mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
+    mycam.clear_fifo_flag()
+    mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
+    mycam.set_format(JPEG)
+    mycam.OV5642_set_JPEG_size(OV5642_320x240);
+    mycam.start_capture();
+    
+    return mycam
 
-def read_fifo_burst(filename: str()):
+def read_fifo_burst(filename: str(), once_number: int=128):
     count=0
     lenght=mycam.read_fifo_length()
     mycam.SPI_CS_LOW()
     mycam.set_fifo_burst()
-    _buffer = bytearray()
+
+    buffer = bytearray(once_number)
+    _buffer = bytearray(once_number)
     while True:
         mycam.spi.readinto(buffer,start=0,end=once_number)
         _buffer += buffer
@@ -78,10 +79,14 @@ def TakePicture(filename: str()):
     mycam.clear_fifo_flag()
     print('done')
 
+lights.ToggleLight('White')
+
 then = time.time()
 led_yellow = lights.GetLight(name_of_light='Yellow')
 led_green = lights.GetLight(name_of_light='Green')
 led_red = lights.GetLight(name_of_light='Red')
+
+mycam = StartCam()
 
 for i in range(3):
     print(f"{i}/2")
