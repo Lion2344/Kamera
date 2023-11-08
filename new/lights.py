@@ -44,7 +44,7 @@ def GetLight(name_of_light: str()):
 
 def Error():
     for led in DictLights():
-        ToggleLight(name_of_light=led, duration=0.3)
+        ToggleLight(name_of_light=led, duration=0.1)
 
 # Define your pin assignments and their new uses.
 #pin_to_check = "Yellow"

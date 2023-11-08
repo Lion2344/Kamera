@@ -8,8 +8,6 @@ import board
 from Arducam import *
 from board import *
 
-
-      
 stop_flag=0
 once_number=128
 value_command=0
@@ -64,7 +62,6 @@ def TakePicture(filename: str()):
     #mycam.OV5642_set_Compress_quality(parameters['compress_qualities'][0])
     #mycam.OV5642_Test_Pattern(parameters['test_patterns'][0])
 
-
     mycam.flush_fifo();
     mycam.clear_fifo_flag();
     print('start capture')
@@ -72,9 +69,13 @@ def TakePicture(filename: str()):
 
 
     print('read burst...')
+    time.sleep(1)
+    lights.ToggleLight('White', duration=1)
     print(read_fifo_burst(filename=filename))
     print('done')
     print('clear the capture...')
+    time.sleep(1)
+    lights.ToggleLight('White', duration=1)
     mycam.clear_fifo_flag()
     print('done')
 
@@ -89,7 +90,6 @@ for i in range(10):
     led_green.value = False
     led_red.value = False
     try:
-        lights.ToggleLight('White', duration=0.1)
         TakePicture(filename=i)
         led_green.value = True
         led_yellow.value = False
@@ -99,7 +99,7 @@ for i in range(10):
         led_green.deinit()
         #lights.Error()
         break
-    time.sleep(0.1)
+    time.sleep(1)
 
 duration = time.time() - then
 led_yellow.deinit()
