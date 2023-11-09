@@ -45,22 +45,6 @@ def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
     print('done')
     file.close()
     print('file closed')
-    """
-    with open(path, method) as f:
-        if method == 'w':
-            f.write(str(entry))
-        elif method == 'a':
-            f.write(f'\n{str(entry)}')
-        elif method == 'wb':    
-            print('writting on sdcard...')
-            f.write(arrays)
-            print('done')
-        elif method == 'r':
-            line = f.readline()
-            while line != '':
-                print(line)
-                line = f.readline()
-    """ 
 
 
 def PrintDirectory(path, tabs=0):

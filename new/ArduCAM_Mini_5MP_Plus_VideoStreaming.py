@@ -8,19 +8,22 @@ import board
 from Arducam import *
 from board import *
 
+def StartCamera():
+    
+    mycam = ArducamClass(OV5642)
+    mycam.Camera_Detection()
 
-mycam = ArducamClass(OV5642)
-mycam.Camera_Detection()
+    mycam.Camera_Init()
+    mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
 
-mycam.Camera_Init()
-mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
+    mycam.clear_fifo_flag()
+    mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
+    mycam.set_format(JPEG)
+    mycam.OV5642_set_JPEG_size(OV5642_320x240);
 
-mycam.clear_fifo_flag()
-mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
-mycam.set_format(JPEG)
-mycam.OV5642_set_JPEG_size(OV5642_320x240);
+    return mycam
 
-def read_fifo_burst(filename: str(), once_number=128):
+def read_fifo_burst(filename: str(), mycam, once_number=128):
 
     count=0
     lenght=mycam.read_fifo_length()
@@ -40,9 +43,12 @@ def read_fifo_burst(filename: str(), once_number=128):
             sdcard.ReadWriteToSD(file_name=f'{filename}.jpg', entry=_buffer, method='wb')
             mycam.SPI_CS_HIGH()
             mycam.clear_fifo_flag()
+            
             break
 
-def TakePicture(filename: str()):
+    return mycam
+
+def TakePicture(filename: str(), mycam):
     #parameters = Parameters()
     #mycam.OV5642_set_JPEG_size(parameters['sizes'][0])
     #mycam.OV5642_set_Light_Mode(parameters['light_modes'][0])
@@ -64,17 +70,20 @@ def TakePicture(filename: str()):
 
 
     print('read burst...')
-    read_fifo_burst(filename=filename)
+    read_fifo_burst(filename=filename, mycam=mycam)
     print('done')
     print('clear the capture...')
     mycam.clear_fifo_flag()
     print('done')
+    
+    return mycam
 
 led_yellow = lights.GetLight(name_of_light='Yellow')
 led_green = lights.GetLight(name_of_light='Green')
 led_red = lights.GetLight(name_of_light='Red')
 
 nbr = 3
+mycam = StartCamera()
 
 for i in range(nbr):
     print(f"{i}/{nbr}")
@@ -83,7 +92,7 @@ for i in range(nbr):
     led_red.value = False
     
     try:
-        TakePicture(filename=i)
+        TakePicture(filename=i, mycam=mycam)
         led_green.value = True       
         led_yellow.value = False
         
@@ -91,8 +100,8 @@ for i in range(nbr):
         led_red.value = True
         led_yellow.deinit()
         led_green.deinit()
-        #lights.Error()
         break    
+    
     time.sleep(1)
 
 led_yellow.deinit()
