@@ -6,8 +6,6 @@ import board
 import busio
 import sdcardio
 import storage
-import lights
-import time
 
 def InitialiseSD():
     try:
@@ -19,11 +17,7 @@ def InitialiseSD():
         storage.mount(vfs, "/sd")
     except Exception as error:
         print(error)
-
-def WriteDurration(duration):
-    with open("/sd/duration.txt", "a") as f:
-        f.write(f"{duration}\r\n")
-
+    
 def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
     """
     method can be:
@@ -34,8 +28,8 @@ def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
     """
     print('initialise SD...')
     InitialiseSD()
-    
     print('done')
+    
     if path =='':
         path = f"/sd/{file_name}"
     else:
@@ -46,18 +40,27 @@ def ReadWriteToSD(file_name: str, entry: str='', path: str='', method: str='w'):
         file = open(path, method)
     except Exception as error:
         print(error)
-    
     print('writing on sdcard...')
-    try:
-        file.write(entry)
-    except:
-        lights.ToggleLight('Red', duration=1)
-        print(error)
-    
+    file.write(entry)
     print('done')
     file.close()
-
     print('file closed')
+    """
+    with open(path, method) as f:
+        if method == 'w':
+            f.write(str(entry))
+        elif method == 'a':
+            f.write(f'\n{str(entry)}')
+        elif method == 'wb':    
+            print('writting on sdcard...')
+            f.write(arrays)
+            print('done')
+        elif method == 'r':
+            line = f.readline()
+            while line != '':
+                print(line)
+                line = f.readline()
+    """ 
 
 
 def PrintDirectory(path, tabs=0):
