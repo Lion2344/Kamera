@@ -8,25 +8,19 @@ import board
 from Arducam import *
 from board import *
 
-stop_flag=0
-once_number=128
-value_command=0
-flag_command=0
 
 mycam = ArducamClass(OV5642)
 mycam.Camera_Detection()
-mycam.Spi_Test()
 
 mycam.Camera_Init()
 mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
-#utime.sleep(1)
+
 mycam.clear_fifo_flag()
 mycam.Spi_write(ARDUCHIP_FRAMES,0x00)
 mycam.set_format(JPEG)
 mycam.OV5642_set_JPEG_size(OV5642_320x240);
-mycam.start_capture();
 
-def read_fifo_burst(filename: str()):
+def read_fifo_burst(filename: str(), once_number=128):
 
     count=0
     lenght=mycam.read_fifo_length()
