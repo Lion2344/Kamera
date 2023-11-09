@@ -80,46 +80,26 @@ led_yellow = lights.GetLight(name_of_light='Yellow')
 led_green = lights.GetLight(name_of_light='Green')
 led_red = lights.GetLight(name_of_light='Red')
 
-nbr = 99
-gap = 0
-zu_lang = True
-while zu_lang == True:
-    zu_lang = False
-    gap += 0.1
-    how_often = 0
-    for i in range(nbr):
-        time_beginning = time.time()
-        print(f"{i}/{nbr}")
-        led_yellow.value = True
-        led_green.value = False
-        led_red.value = False
-        try:
-            TakePicture(filename=i)
-            
-            duration = time.time() - time_beginning     
-            led_green.value = True
-            left = gap - duration
-            
-            if left > 0:
-                time.sleep(left)
-            else:
-                zu_lang = True
-                how_often += 1
-            led_yellow.value = False
-            
-        except:
-            led_red.value = True
-            led_yellow.deinit()
-            led_green.deinit()
-            #lights.Error()
-            break
-        
-    if zu_lang == True:
-        _string = f'duration:{duration}, Left:{left}'
-        _string = f' Gap={gap} > Duration: {how_often} times'
-        sdcard.WriteDurration(_string)
-    
+nbr = 3
 
+for i in range(nbr):
+    print(f"{i}/{nbr}")
+    led_yellow.value = True
+    led_green.value = False
+    led_red.value = False
+    
+    try:
+        TakePicture(filename=i)
+        led_green.value = True       
+        led_yellow.value = False
+        
+    except:
+        led_red.value = True
+        led_yellow.deinit()
+        led_green.deinit()
+        #lights.Error()
+        break    
+    time.sleep(1)
 
 led_yellow.deinit()
 led_green.deinit()
