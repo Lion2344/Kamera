@@ -4,18 +4,30 @@ UID:E6616407E3397931
 MAC:28:CD:C1:07:6E:7A
 boot.py output:
 <<<<<<< HEAD
+<<<<<<< HEAD
 SPI interface OK
 0/2
+=======
+SPI interface OK
+0/99
+>>>>>>> Test
 start capture
 read burst...
 call sd...
 initialise SD...
+<<<<<<< HEAD
 [Errno 19] No such device
+=======
+no SD card
+>>>>>>> Test
 done
 open file
 [Errno 30] Read-only filesystem
 writing on sdcard...
+<<<<<<< HEAD
 5
 =======
 An exception occured in InitialiseSD(): [Errno 19] No such device
+>>>>>>> Test
+=======
 >>>>>>> Test

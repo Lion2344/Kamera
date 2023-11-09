@@ -19,7 +19,12 @@ def ToggleLight(name_of_light: str, duration: int=1):
     led.direction = Direction.OUTPUT
     
     if name_of_light == 'White':
+<<<<<<< HEAD
         time.sleep(duration)
+=======
+        time.sleep(duration/10)
+        
+>>>>>>> Test
     led.value = True
     time.sleep(duration)
     led.value = False
@@ -43,7 +48,7 @@ def GetLight(name_of_light: str()):
 
 def Error():
     for led in DictLights():
-        ToggleLight(name_of_light=led, duration=0.3)
+        ToggleLight(name_of_light=led, duration=0.1)
 
 
 
