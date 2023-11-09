@@ -3,16 +3,14 @@ Board ID:raspberry_pi_pico_w
 UID:E6616407E3397931
 MAC:28:CD:C1:07:6E:7A
 boot.py output:
-SPI interface Error
 SPI interface OK
-0/2
+0/99
 start capture
 read burst...
 call sd...
 initialise SD...
-[Errno 19] No such device
+no SD card
 done
 open file
 [Errno 30] Read-only filesystem
 writing on sdcard...
-7
