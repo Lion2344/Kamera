@@ -14,7 +14,7 @@ def ConnectToWifi():
     
     leds[1].value = True
     try:
-        wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
+        wifi.radio.connect(os.getenv("WIFI_SSID_Home"), os.getenv("WIFI_PASSWORD_Home"))
         leds[2].value = True
     except:
         leds[0].value = True
