@@ -21,6 +21,7 @@ def ToggleLight(name_of_light: str, duration: int=1):
     if name_of_light == 'White':
         time.sleep(duration)
         
+>>>>>>> Test
     led.value = True
     time.sleep(duration)
     led.value = False
@@ -45,3 +46,20 @@ def GetLight(name_of_light: str()):
 def Error():
     for led in DictLights():
         ToggleLight(name_of_light=led, duration=0.3)
+
+# Define your pin assignments and their new uses.
+#pin_to_check = "Yellow"
+#new_direction = Direction.OUTPUT
+#new_use = "Yellow"
+
+# Check and assign the pin.
+#assigned_pin = check_and_assign_pin(name_of_light='Yellow', value=True)
+
+# Perform your operations with the assigned pin.
+#assigned_pin.value = True
+#time.sleep(2)
+#assigned_pin.value = False
+#assigned_pin.deinit()
+
+
+

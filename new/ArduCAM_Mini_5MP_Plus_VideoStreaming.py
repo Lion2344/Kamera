@@ -9,9 +9,6 @@ from Arducam import *
 from board import *
 
 def StartCamera():
-    
-    mycam = ArducamClass(OV5642)
-    mycam.Camera_Detection()
 
     mycam.Camera_Init()
     mycam.Spi_write(ARDUCHIP_TIM,VSYNC_LEVEL_MASK)
@@ -24,13 +21,18 @@ def StartCamera():
     return mycam
 
 def read_fifo_burst(filename: str(), mycam, once_number=128):
-
     count=0
     lenght=mycam.read_fifo_length()
     mycam.SPI_CS_LOW()
     mycam.set_fifo_burst()
+<<<<<<< HEAD
+
+    buffer = bytearray(once_number)
+    _buffer = bytearray(once_number)
+=======
     buffer=bytearray(once_number)
     _buffer = bytearray()
+>>>>>>> Test
     while True:
         mycam.spi.readinto(buffer,start=0,end=once_number)
         _buffer += buffer
@@ -78,23 +80,17 @@ def TakePicture(filename: str(), mycam):
     
     return mycam
 
+<<<<<<< HEAD
+lights.ToggleLight('Green')
+lights.ToggleLight('White')
+then = time.time()
+=======
+>>>>>>> Test
 led_yellow = lights.GetLight(name_of_light='Yellow')
 led_green = lights.GetLight(name_of_light='Green')
 led_red = lights.GetLight(name_of_light='Red')
 
 nbr = 3
-mycam = StartCamera()
-
-for i in range(nbr):
-    print(f"{i}/{nbr}")
-    led_yellow.value = True
-    led_green.value = False
-    led_red.value = False
-    
-    try:
-        TakePicture(filename=i, mycam=mycam)
-        led_green.value = True       
-        led_yellow.value = False
         
     except:
         led_red.value = True
