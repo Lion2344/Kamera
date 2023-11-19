@@ -6,24 +6,16 @@ import wifi
 import os
 
 def ConnectToWifi():
-    leds = [
-        lights.GetLight(name_of_light='Red'),
-        lights.GetLight(name_of_light='Yellow'),
-        lights.GetLight(name_of_light='Green')
-    ]
     
-    leds[1].value = True
     try:
-        wifi.radio.connect(os.getenv("WIFI_SSID_Home"), os.getenv("WIFI_PASSWORD_Home"))
-        leds[2].value = True
+        wifi.radio.connect(
+            os.getenv("WIFI_SSID_Home"),
+            os.getenv("WIFI_PASSWORD_Home")
+        )
+        lights.ToggleLight('Green')
     except:
-        leds[0].value = True
-    
-    time.sleep(1)
-    for led in leds:
-        led.deinit()
+        lights.ToggleLight('Red')
 
-    
 def ScanningAvailableNetwork():
     networks = wifi.radio.start_scanning_networks()
     for network in networks:
