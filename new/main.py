@@ -18,6 +18,7 @@ aio_key = os.getenv('AIO_KEY')
 strip_on_off_feed = aio_username + "/feeds/strip_on_off"
 temperature_feed = aio_username + "/feeds/temperature"
 pic_feed = aio_username + "/feeds/pic"
+image_feed = aio_username + "/feeds/image"
 
 #Setup functions to respond to MQTT events
 def subscribe(client, userdata, topic, granted_qos):
@@ -28,9 +29,10 @@ def connected(client, userdata, flags, rc):
     # Connected to broke at adafruit io
     print("Connected to Adafruit IO! Listening for topic changes I have subscribed to")
     #Subscribe to all changes on the feed
-    client.subscribe(strip_on_off_feed)
-    client.subscribe(temperature_feed)
+    #client.subscribe(strip_on_off_feed)
+    #client.subscribe(temperature_feed)
     client.subscribe(pic_feed)
+    #client.subscribe(image_feed)
     
 def disconnected(client, userdata, rc):
     #Disconnected from the broker at adafruit IO!
@@ -60,7 +62,7 @@ mqtt_client.on_subscribe = subscribe
 
 print("Connecting to Adafruit IO...")
 mqtt_client.connect()
-lights.ToggleLight('White')
+
 j = 0
 i = 10
 
@@ -68,7 +70,12 @@ import ArduCAM_Mini_5MP_Plus_VideoStreaming as aducam
 
 mycam = aducam.StartCamera()
 mycam, buffer = aducam.TakePicture(filename='Test', mycam=mycam)
-_buffer = buffer[:128]
+
+print(len(buffer))
+_len = 128 * 2
+_time = 0
+_iter = 0
+_maxiter = 30
 while j <= i:
     #keep checking the mqtt message queue
     mqtt_client.loop()
@@ -83,20 +90,40 @@ while j <= i:
     # publish it to io
     #print("Publishing %s to temperature feed..." % cpu_temp)
     start = 0
-    mqtt_client.publish(pic_feed, '##########################################')
-    for _b in range(0, len(buffer), 128):
+    #mqtt_client.publish(pic_feed, '##########################################')
+    
+    print('Waiting for start...')
+    print(buffer[0:2])
+    time.sleep(60)
+    print("Connecting to Adafruit IO...")
+    mqtt_client.connect()
+    
+    for _b in range(_len, len(buffer), _len):
+        _iter += 1
+        if _iter == _maxiter:
+            print(f'sleeping...{(end/len(buffer))*100}% Done')
+            time.sleep(60)
+            print("Connecting to Adafruit IO...")
+            mqtt_client.connect()
+            
+            _iter = 0
+            
         end = _b
-        print(f'start: {start} end: {end}')
+        print(f'start: {start} end: {end} total: {len(buffer)}')
         _buffer = buffer[start:end]
-        mqtt_client.publish(pic_feed, str(_buffer))
+        mqtt_client.publish(pic_feed, str(_buffer)+',')
         start = _b+1
 
-        time.sleep(10)
-        print((end/len(buffer))*100)
-    time.sleep(120)
-    mqtt_client.publish(pic_feed, '##########################################')
+        time.sleep(_time)
+
+    
+    time.sleep(5)
+    _buffer = buffer[end:len(buffer)-1]
+    mqtt_client.publish(pic_feed, str(_buffer))
+    #mqtt_client.publish(pic_feed, '##########################################')
+    #mqtt_client.publish(image_feed, str(buffer))
     print('DONE')
-    mqtt_client.publish(temperature_feed, cpu_temp)
+    #mqtt_client.publish(temperature_feed, cpu_temp)
     #print("Published!")
     j= 1 + i
 lights.ToggleLight('White')
